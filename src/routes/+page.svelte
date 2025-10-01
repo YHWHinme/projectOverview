@@ -1,19 +1,21 @@
 <script lang="ts">
-  import { invoke } from "@tauri-apps/api/core";
-  import Sidebar from "$lib/Components/Sidebar.svelte";
+  import { onMount } from 'svelte';
+  import { goto } from '$app/navigation';
 
-  let response: string | undefined;
-  let currentView = 'dashboard';
-
-  const greet = async () => {
-    response = await invoke("hello");
-  };
-
-  function handleNavigation(event: CustomEvent<{ itemId: string }>) {
-    currentView = event.detail.itemId;
-    console.log('Navigated to:', currentView);
-  }
+  // Redirect to dashboard on page load
+  onMount(() => {
+    goto('/dashboard');
+  });
 </script>
 
-  <!-- Sidebar -->
-  <Sidebar on:navigate={handleNavigation} />
+<svelte:head>
+  <title>Project Overseer</title>
+</svelte:head>
+
+<!-- This page will automatically redirect to dashboard -->
+<div class="max-w-4xl">
+  <div class="bg-white rounded-lg shadow-md p-8 text-center">
+    <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500 mx-auto mb-4"></div>
+    <p class="text-gray-600">Loading Project Overseer...</p>
+  </div>
+</div>

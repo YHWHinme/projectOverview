@@ -1,23 +1,23 @@
 <script lang="ts">
-  import { createEventDispatcher } from 'svelte';
-
-  const dispatch = createEventDispatcher();
+  import { goto } from '$app/navigation';
+  import { page } from '$app/stores';
 
   const navigationItems = [
-    { id: 'dashboard', label: 'Dashboard'},
-    { id: 'projects', label: 'Projects'}
+    { path: '/dashboard', label: 'Dashboard'},
+    { path: '/projects', label: 'Projects'},
+    { path: '/tasks', label: 'Tasks'}
   ];
 
   const bottomItems = [
-    { id: 'settings', label: 'Settings'}
+    { path: '/settings', label: 'Settings'}
   ];
 
-  let activeItem = 'dashboard';
-
-  function selectItem(itemId: string) {
-    activeItem = itemId;
-    dispatch('navigate', { itemId });
+  function navigateTo(path: string) {
+    goto(path);
   }
+
+  // Reactive statement to determine active item based on current route
+  $: currentPath = $page.url.pathname;
 </script>
 
 <div class="bg-gray-800 text-white w-64 h-screen flex flex-col">
@@ -37,10 +37,10 @@
       {#each navigationItems as item}
         <li>
           <button
-            class="w-full flex items-center px-2 py-1.5 rounded-md transition-colors duration-200 text-sm {activeItem === item.id
+            class="w-full flex items-center px-2 py-1.5 rounded-md transition-colors duration-200 text-sm {currentPath === item.path
               ? 'bg-blue-600 text-white'
               : 'text-gray-300 hover:bg-gray-700 hover:text-white'}"
-            on:click={() => selectItem(item.id)}
+            on:click={() => navigateTo(item.path)}
           >
             <span>{item.label}</span>
           </button>
@@ -57,10 +57,10 @@
       {#each bottomItems as item}
         <li>
           <button
-            class="w-full flex items-center px-2 py-1.5 rounded-md transition-colors duration-200 text-sm {activeItem === item.id
+            class="w-full flex items-center px-2 py-1.5 rounded-md transition-colors duration-200 text-sm {currentPath === item.path
               ? 'bg-blue-600 text-white'
               : 'text-gray-300 hover:bg-gray-700 hover:text-white'}"
-            on:click={() => selectItem(item.id)}
+            on:click={() => navigateTo(item.path)}
           >
             <span>{item.label}</span>
           </button>
