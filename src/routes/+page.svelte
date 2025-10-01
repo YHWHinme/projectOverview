@@ -1,22 +1,19 @@
 <script lang="ts">
   import { invoke } from "@tauri-apps/api/core";
+  import Sidebar from "$lib/Components/Sidebar.svelte";
 
   let response: string | undefined;
+  let currentView = 'dashboard';
 
   const greet = async () => {
     response = await invoke("hello");
   };
+
+  function handleNavigation(event: CustomEvent<{ itemId: string }>) {
+    currentView = event.detail.itemId;
+    console.log('Navigated to:', currentView);
+  }
 </script>
 
-<h1 class="text-4xl">Welcome to SvelteKit</h1>
-<p>
-  Visit <a href="https://kit.svelte.dev">kit.svelte.dev</a> to read the documentation
-</p>
-
-<button type="button" class="border-2 border-gray-700" on:click={() => greet()}>
-  Click Me!
-</button>
-
-{#if response}
-  <p>{response}</p>
-{/if}
+  <!-- Sidebar -->
+  <Sidebar on:navigate={handleNavigation} />

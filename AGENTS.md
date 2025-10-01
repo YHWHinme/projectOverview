@@ -44,4 +44,3 @@
 - Import organization: external dependencies first, then internal ($lib)
 - Consistent indentation, semicolons required
 - No Cursor rules or Copilot instructions configured
-
