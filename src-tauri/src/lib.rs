@@ -5,12 +5,33 @@ fn hello() -> String {
     "Hello from Rust!".to_string()
 }
 
+#[derive(serde::Serialize)]
+struct RowStruct {
+  id: i32,
+  project_id: i32,
+  title: String,
+};
+
 //Get everything from tasks
 #[tauri::command]
-fn getFromTasks(){
-    let conn = Connections::open("../database/database.sql");
-}
+fn getFromTasks() {
+    let conn = Connections::open("../database/database.sql").unwrap();
 
+    let mut prep = conn.prepare("SELECT * FROM tasks").unwrap();
+    // Mapping into struct
+    let rows =  prep
+        .query_map([], |row| {
+            Ok(RowStruct {
+                id: row.get(0)?,
+                title: row.get(1)?,
+                project_id: row.get(2)?,
+            })
+        });
+    //Collecting the rows into a vector (json)
+    let tasks: Vec<RowStruct> = rows.map(|row| row.unwrap().collect());
+
+    tasks
+}
 
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
