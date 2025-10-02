@@ -8,8 +8,8 @@ struct TasksOutput {
 };
 
 //Get everything from tasks
-#[tauri::command]
-fn getFromTasks() {
+#[tauri::command(async)]
+fn getFromTasks() -> Vec<TasksOutput> {
     let conn = Connections::open("../database/database.sql").unwrap();
 
     let mut prep = conn.prepare("SELECT * FROM tasks").unwrap();
