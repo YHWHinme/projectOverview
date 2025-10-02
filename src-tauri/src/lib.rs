@@ -1,12 +1,7 @@
 use rusqlite::Connections;
 
-#[tauri::command]
-fn hello() -> String {
-    "Hello from Rust!".to_string()
-}
-
 #[derive(serde::Serialize)]
-struct RowStruct {
+struct TasksOutput {
   id: i32,
   project_id: i32,
   title: String,
@@ -21,14 +16,14 @@ fn getFromTasks() {
     // Mapping into struct
     let rows =  prep
         .query_map([], |row| {
-            Ok(RowStruct {
+            Ok(TasksOutput {
                 id: row.get(0)?,
                 title: row.get(1)?,
                 project_id: row.get(2)?,
             })
         });
     //Collecting the rows into a vector (json)
-    let tasks: Vec<RowStruct> = rows.map(|row| row.unwrap().collect());
+    let tasks: Vec<TasksOutput> = rows.map(|row| row.unwrap().collect());
 
     tasks
 }
