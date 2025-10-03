@@ -15,18 +15,15 @@
 	// Load tasks from the Tauri backend when the component mounts
 	onMount(async () => {
 		// Invoke the 'getFromTasks' command to fetch all tasks from the database
-		tasks = await invoke<TasksOutput[]>("getFromTasks");
+		tasks = await invoke<TasksOutput[]>("get_from_tasks");
 	});
 </script>
 
 <h1>Hello from project</h1>
+<p>{tasks.length} tasks loaded</p>
 <br />
 <!-- Display the list of tasks once loaded -->
 {#each tasks as task}
-	<!-- Showing how many tasks there are -->
-	<p>{tasks.length} tasks loaded</p>
-	<br />
-
 	<!-- Main logic -->
 	<div class="task-item">
 		<h2>{task.title}</h2>
