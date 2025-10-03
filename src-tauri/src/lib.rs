@@ -12,19 +12,7 @@ struct TasksOutput {
 #[tauri::command(async)]
 async fn get_from_tasks() -> Result<Vec<TasksOutput>, String> {
     let tasks = spawn_blocking(|| -> Result<Vec<TasksOutput>, rusqlite::Error> {
-        let conn = Connection::open_in_memory()?;
-        conn.execute(
-            "CREATE TABLE IF NOT EXISTS tasks (
-                id INTEGER PRIMARY KEY AUTOINCREMENT,
-                title TEXT NOT NULL,
-                project_id INTEGER NOT NULL
-            )",
-            [],
-        )?;
-
-        conn.execute("INSERT INTO tasks (title, project_id) VALUES (?, ?)", [&"hello", &"1"])?;
-        conn.execute("INSERT INTO tasks (title, project_id) VALUES (?, ?)", [&"Learn to play golf", &"2"])?;
-        conn.execute("INSERT INTO tasks (title, project_id) VALUES (?, ?)", [&"learn sqlite", &"3"])?;
+        let conn = Connection::open("/home/oj2/projects/Apps/projectOverseer/src-tauri/database/database.sql")?;
 
         let mut prep = conn.prepare("SELECT * FROM tasks")?;
         let rows = prep.query_map([], |row| {
