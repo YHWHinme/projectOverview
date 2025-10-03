@@ -10,13 +10,19 @@
 		project_id: number;
 	}
 
+	// Deleting task
+	// TODO: I need to get the props going from rust (idk how)
+	async function delete_tasks() {
+		await invoke<TasksOutput[]>("delete_task");
+	}
+
 	// Reactive variable to hold the list of tasks, initialized as empty array
 	let tasks: TasksOutput[] = [];
 
 	// Load tasks from the Tauri backend when the component mounts
 	onMount(async () => {
 		// Invoke the 'getFromTasks' command to fetch all tasks from the database
-		tasks = await invoke<TasksOutput[]>("get_from_tasks");
+		tasks = await invoke<TasksOutput[]>("get_all_from_tasks");
 	});
 </script>
 
