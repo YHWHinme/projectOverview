@@ -1,7 +1,7 @@
 <script lang="ts">
- 	import { invoke } from "@tauri-apps/api/core";
- 	import { onMount } from "svelte";
- 	import TaskBit from "$lib/Components/TaskBit.svelte";
+	import { invoke } from "@tauri-apps/api/core";
+	import { onMount } from "svelte";
+	import TaskBit from "$lib/Components/TaskBit.svelte";
 
 	// Define the structure of task data returned from the backend
 	interface TasksOutput {
