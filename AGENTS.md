@@ -89,3 +89,15 @@
 - **Type safety**: Full TypeScript support with explicit types
 - **Performance**: Efficient database queries and component rendering
 - **Maintainability**: Clean separation between components and clear prop interfaces
+
+### Delete Functionality Implementation and Debugging
+- **Frontend Delete**: Implemented event-driven delete in `TaskBit.svelte` with `createEventDispatcher`, listened in `+page.svelte` with error handling (alert + console log), reloads tasks on success
+- **Backend Delete**: `delete_task` command added with async DB operation, added println! logging for debugging
+- **Current Issue**: App restarts on delete—likely backend panic or DB error
+- **Debug Checklist**:
+  - Check if database.sql exists and is accessible
+  - Verify tasks table schema (id INTEGER, title TEXT, project_id INTEGER)
+  - Review Rust console logs for failure points
+  - Test direct invoke of delete_task
+  - Ensure no DB locking or invalid task_ids
+- **Next Steps**: Run app, attempt delete, check logs to isolate cause

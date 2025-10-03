@@ -10,13 +10,25 @@
 		project_id: number;
 	}
 
+	// Deleting task
+	async function delete_tasks(task_id: number) {
+		try {
+			await invoke("delete_task", { taskId: task_id });
+			// Reload tasks after deletion
+			tasks = await invoke<TasksOutput[]>("get_all_from_tasks");
+		} catch (error) {
+			alert("Failed to delete task: " + error);
+			console.error("Delete error:", error);
+		}
+	}
+
 	// Reactive variable to hold the list of tasks, initialized as empty array
 	let tasks: TasksOutput[] = [];
 
 	// Load tasks from the Tauri backend when the component mounts
 	onMount(async () => {
-		// Invoke the 'getFromTasks' command to fetch all tasks from the database
-		tasks = await invoke<TasksOutput[]>("get_from_tasks");
+		// Invoke the 'get_all_from_tasks' command to fetch all tasks from the database
+		tasks = await invoke<TasksOutput[]>("get_all_from_tasks");
 	});
 </script>
 
@@ -25,7 +37,12 @@
 <br />
 <!-- Display the list of tasks once loaded -->
 {#each tasks as task}
-	<TaskBit id={task.id} title={task.title} projectId={task.project_id} />
+	<TaskBit
+		id={task.id}
+		title={task.title}
+		projectId={task.project_id}
+		on:delete={(event) => delete_tasks(event.detail)}
+	/>
 {/each}
 <!-- Show loading message if tasks are still being fetched -->
 {#if tasks.length === 0}

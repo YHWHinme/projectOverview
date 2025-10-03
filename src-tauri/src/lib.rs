@@ -10,7 +10,7 @@ struct TasksOutput {
 
 //Get everything from tasks
 #[tauri::command(async)]
-async fn get_from_tasks() -> Result<Vec<TasksOutput>, String> {
+async fn get_all_from_tasks() -> Result<Vec<TasksOutput>, String> {
     let tasks = spawn_blocking(|| -> Result<Vec<TasksOutput>, rusqlite::Error> {
         let conn = Connection::open("/home/oj2/projects/Apps/projectOverseer/src-tauri/database/database.sql")?;
 
@@ -32,10 +32,25 @@ async fn get_from_tasks() -> Result<Vec<TasksOutput>, String> {
     Ok(tasks)
 }
 
+#[tauri::command(async)]
+async fn delete_task(task_id: i32) -> Result<(), String> {
+    spawn_blocking(move || -> Result<(), rusqlite::Error> {
+        let conn = Connection::open("/home/oj2/projects/Apps/projectOverseer/src-tauri/database/database.sql")?;
+        conn.execute("DELETE FROM tasks WHERE id = ?", [task_id])?;
+
+        Ok(())
+    })
+    .await
+    .map_err(|e| format!("Task panicked: {}", e))?
+    .map_err(|e| format!("Database error: {}", e))?;
+
+    Ok(())
+}
+
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
     tauri::Builder::default()
-        .invoke_handler(tauri::generate_handler![get_from_tasks])
+        .invoke_handler(tauri::generate_handler![get_all_from_tasks, delete_task])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
 }
