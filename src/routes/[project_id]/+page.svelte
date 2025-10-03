@@ -1,6 +1,7 @@
 <script lang="ts">
-	import { invoke } from "@tauri-apps/api/core";
-	import { onMount } from "svelte";
+ 	import { invoke } from "@tauri-apps/api/core";
+ 	import { onMount } from "svelte";
+ 	import TaskBit from "$lib/Components/TaskBit.svelte";
 
 	// Define the structure of task data returned from the backend
 	interface TasksOutput {
@@ -24,11 +25,7 @@
 <br />
 <!-- Display the list of tasks once loaded -->
 {#each tasks as task}
-	<!-- Main logic -->
-	<div class="task-item">
-		<h2>{task.title}</h2>
-		<p>ID: {task.id}, Project ID: {task.project_id}</p>
-	</div>
+	<TaskBit id={task.id} title={task.title} projectId={task.project_id} />
 {/each}
 <!-- Show loading message if tasks are still being fetched -->
 {#if tasks.length === 0}

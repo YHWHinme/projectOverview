@@ -22,9 +22,9 @@ async fn get_from_tasks() -> Result<Vec<TasksOutput>, String> {
             [],
         )?;
 
-        conn.execute("INSERT INTO tasks (title, project_id) VALUES (?, ?)", [&"hello", &"2"])?;
+        conn.execute("INSERT INTO tasks (title, project_id) VALUES (?, ?)", [&"hello", &"1"])?;
         conn.execute("INSERT INTO tasks (title, project_id) VALUES (?, ?)", [&"Learn to play golf", &"2"])?;
-        conn.execute("INSERT INTO tasks (title, project_id) VALUES (?, ?)", [&"learn sqlite", &"2"])?;
+        conn.execute("INSERT INTO tasks (title, project_id) VALUES (?, ?)", [&"learn sqlite", &"3"])?;
 
         let mut prep = conn.prepare("SELECT * FROM tasks")?;
         let rows = prep.query_map([], |row| {
