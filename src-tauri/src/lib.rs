@@ -11,8 +11,16 @@ struct TasksOutput {
 //Get everything from tasks
 #[tauri::command(async)]
 async fn get_all_from_tasks() -> Result<Vec<TasksOutput>, String> {
-    let tasks = spawn_blocking(|| -> Result<Vec<TasksOutput>, rusqlite::Error> {
-        let conn = Connection::open("/home/oj2/projects/Apps/projectOverseer/src-tauri/database/database.sql")?;
+    let exe_path = env::current_exe().map_err(|e| format!("Failed to get executable path: {}", e))?;
+    let db_path = exe_path
+        .parent()
+        .and_then(|p| p.parent())
+        .and_then(|p| p.parent())
+        .ok_or_else(|| "Failed to resolve database path from executable location".to_string())?
+        .join("database/database.sql");
+
+    let tasks = spawn_blocking(move || -> Result<Vec<TasksOutput>, rusqlite::Error> {
+        let conn = Connection::open(&db_path)?;
 
         let mut prep = conn.prepare("SELECT * FROM tasks")?;
         let rows = prep.query_map([], |row| {
@@ -33,9 +41,17 @@ async fn get_all_from_tasks() -> Result<Vec<TasksOutput>, String> {
 }
 
 #[tauri::command(async)]
-async fn delete_task(task_id: i32) -> Result<(), String> {
+async fn delete_task(task_id: i32) -> Result<String, String> {
+    let exe_path = env::current_exe().map_err(|e| format!("Failed to get executable path: {}", e))?;
+    let db_path = exe_path
+        .parent()
+        .and_then(|p| p.parent())
+        .and_then(|p| p.parent())
+        .ok_or_else(|| "Failed to resolve database path from executable location".to_string())?
+        .join("database/database.sql");
+
     spawn_blocking(move || -> Result<(), rusqlite::Error> {
-        let conn = Connection::open("/home/oj2/projects/Apps/projectOverseer/src-tauri/database/database.sql")?;
+        let conn = Connection::open(&db_path)?;
         conn.execute("DELETE FROM tasks WHERE id = ?", [task_id])?;
 
         Ok(())
