@@ -8,13 +8,6 @@
 		"beforeDevCommand": "npm run dev",
 		"beforeBuildCommand": "npm run build"
 	},
-	"plugins": {
-		"sql": {
-			"preload": [
-				"sqlite:mydatabase.db"
-			]
-		}
-	},
 	"app": {
 		"windows": [
 			{
