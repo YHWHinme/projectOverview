@@ -1,24 +1,39 @@
 <script lang="ts">
-	import * as lib from "../../lib/lib"
+	import * as lib from "../../lib/lib";
+	import type { Task } from "../../lib/lib";
 	import { onMount } from "svelte";
+	import { page } from "$app/stores";
 	import TaskBit from "$lib/Components/TaskBit.svelte";
+	import AddTask from "$lib/Components/AddTask.svelte";
 
+	let tasks: Task[] = [];
+	let projectId: number;
 
+	// Binds whatever the dynamic id is to projectId or zero
+	$: projectId = parseInt($page.params.project_id || "0");
+
+	async function loadTasks() {
+		const allTasks = await lib.getTasks();
+		// Filters all tasks to get whatever the project id is
+		tasks = allTasks.filter((task) => task.project_id === projectId);
+	}
+
+	onMount(async () => {
+		loadTasks();
+	});
 </script>
 
-<h1>Hello from project</h1>
-<p>{tasks.length} tasks loaded</p>
-<br />
-<!-- Display the list of tasks once loaded -->
-{#each tasks as task}
-	<TaskBit
-		id={task.id}
-		title={task.title}
-		projectId={task.project_id}
-		on:delete={(event) => delete_tasks(event.detail)}
-	/>
-{/each}
-<!-- Show loading message if tasks are still being fetched -->
+<!-- Add Task Component -->
+<AddTask {projectId} on:add={loadTasks} />
+
+<!-- Checking if there are tasks -->
 {#if tasks.length === 0}
-	<p>{tasks.length} tasks loaded</p>
+	<p>You've got no tasks...</p>
+{:else}
+	<!-- Displaying the tasks -->
+	{#each tasks as task}
+		<div>
+			<TaskBit id={task.id} title={task.title} projectId={task.project_id} />
+		</div>
+	{/each}
 {/if}

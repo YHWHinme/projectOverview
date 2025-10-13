@@ -1,6 +1,6 @@
 <script lang="ts">
 	// Defining imports
-	import { createEventDispatcher } from 'svelte';
+	import { createEventDispatcher } from "svelte";
 	const dispatch = createEventDispatcher();
 
 	// Defining props
@@ -14,7 +14,7 @@
 	}
 
 	function deleteTask() {
-		dispatch('delete', id);
+		dispatch("delete", id);
 	}
 </script>
 

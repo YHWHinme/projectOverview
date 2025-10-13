@@ -1,7 +1,7 @@
 {
-	"productName": "tauri-svelte-tailwind-template",
+	"productName": "Projects Overview",
 	"version": "0.1.0",
-	"identifier": "com.tauri.dev",
+	"identifier": "com.overview.dev",
 	"build": {
 		"frontendDist": "../src",
 		"devUrl": "http://localhost:5173",
@@ -11,7 +11,7 @@
 	"app": {
 		"windows": [
 			{
-				"title": "tauri-svelte-tailwind-template",
+				"title": "Projects Overview",
 				"width": 800,
 				"height": 600,
 				"resizable": true,

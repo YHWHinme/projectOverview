@@ -7,7 +7,7 @@ pub fn run() {
         Migration {
             version: 2,
             description: "create_initial_tables",
-            sql: include_str!("../database/schema.sqlite"),
+            sql: include_str!("../database/schema.sql"),
             kind: MigrationKind::Up,
         }
     ];
