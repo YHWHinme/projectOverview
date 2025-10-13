@@ -1,12 +1,12 @@
 <script lang="ts">
 	import * as lib from "../../lib/lib";
-	import type { Task } from "../../lib/lib";
+	import type { Tasks } from "../../lib/lib";
 	import { onMount } from "svelte";
 	import { page } from "$app/stores";
 	import TaskBit from "$lib/Components/TaskBit.svelte";
 	import AddTask from "$lib/Components/AddTask.svelte";
 
-	let tasks: Task[] = [];
+	let tasks: Tasks[] = [];
 	let projectId: number;
 
 	// Binds whatever the dynamic id is to projectId or zero
@@ -24,7 +24,7 @@
 </script>
 
 <!-- Add Task Component -->
-<AddTask {projectId} on:add={loadTasks} />
+<AddTask on:add={loadTasks} />
 
 <!-- Checking if there are tasks -->
 {#if tasks.length === 0}

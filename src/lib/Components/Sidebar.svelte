@@ -4,6 +4,7 @@
   const navigationItems = [
     { path: '/dashboard', label: 'Dashboard'},
     { path: '/projects', label: 'Projects'},
+    { path: '/clients', label: 'Clients'},
     { path: '/tasks', label: 'Tasks'}
   ];
 

@@ -1,116 +1,76 @@
 <script lang="ts">
   import ProjectSection from '$lib/Components/ProjectSection.svelte';
+  import * as lib from "../../lib/lib";
+  import { onMount } from "svelte";
 
-  // Mock task data with Todoist-like structure
-  let tasks = [
-    {
-      id: 1,
-      text: "Review project proposals",
-      completed: false,
-      priority: "high",
-      project: "Work",
-      dueDate: "2024-01-15",
-      labels: ["urgent", "review"]
-    },
-    {
-      id: 2,
-      text: "Update website documentation",
-      completed: false,
-      priority: "medium",
-      project: "Website Redesign",
-      dueDate: "2024-01-16",
-      labels: ["documentation"]
-    },
-    {
-      id: 3,
-      text: "Call client about requirements",
-      completed: true,
-      priority: "high",
-      project: "Mobile App Development",
-      dueDate: "2024-01-14",
-      labels: ["client", "meeting"]
-    },
-    {
-      id: 4,
-      text: "Set up development environment",
-      completed: false,
-      priority: "low",
-      project: "API Integration",
-      dueDate: null,
-      labels: ["setup", "dev"]
-    },
-    {
-      id: 5,
-      text: "Design user interface mockups",
-      completed: false,
-      priority: "medium",
-      project: "Mobile App Development",
-      dueDate: "2024-01-18",
-      labels: ["design", "ui"]
-    },
-    {
-      id: 6,
-      text: "Write API documentation",
-      completed: false,
-      priority: "medium",
-      project: "API Integration",
-      dueDate: "2024-01-20",
-      labels: ["documentation", "api"]
-    },
-    {
-      id: 7,
-      text: "Test mobile responsiveness",
-      completed: true,
-      priority: "high",
-      project: "Website Redesign",
-      dueDate: "2024-01-12",
-      labels: ["testing", "mobile"]
-    }
-  ];
-
+  let dbTasks: lib.Tasks[] = [];
+  let projects: lib.Projects[] = [];
   let newTaskText = "";
   let showCompleted = false;
-  let newTaskProject = "Inbox";
+  let selectedProjectId: number = 0;
 
-  // Group tasks by project
-  $: tasksByProject = tasks.reduce((acc, task) => {
+  // Adapted tasks for ProjectSection
+  $: adaptedTasks = dbTasks.map(task => {
+    const project = projects.find(p => p.id === task.project_id);
+    return {
+      id: task.id,
+      text: task.title,
+      completed: task.complete === 1,
+      priority: "medium", // default
+      project: project ? project.name : "Unknown",
+      dueDate: null,
+      labels: []
+    };
+  });
+
+  // Group adapted tasks by project name
+  $: tasksByProject = adaptedTasks.reduce((acc, task) => {
     if (!acc[task.project]) {
       acc[task.project] = [];
     }
     acc[task.project].push(task);
     return acc;
-  }, {} as Record<string, typeof tasks>);
+  }, {} as Record<string, typeof adaptedTasks>);
 
   // Get sorted project names
   $: projectNames = Object.keys(tasksByProject).sort();
 
-  // Get unique projects for dropdown
-  $: projects = ["Inbox", ...new Set(tasks.map(task => task.project)).values()].filter(p => p !== "Inbox");
+  async function loadData() {
+    dbTasks = await lib.getTasks();
+    projects = await lib.getProjects();
+    if (projects.length > 0 && selectedProjectId === 0) {
+      selectedProjectId = projects[0].id;
+    }
+  }
+
+  onMount(loadData);
 
   function toggleTask(taskId: number) {
-    tasks = tasks.map(task => 
+    // Note: This is UI only, DB update would need backend command
+    adaptedTasks = adaptedTasks.map(task =>
       task.id === taskId ? { ...task, completed: !task.completed } : task
     );
   }
 
-  function addTask() {
-    if (newTaskText.trim()) {
-      const newTask = {
-        id: Math.max(...tasks.map(t => t.id)) + 1,
-        text: newTaskText.trim(),
-        completed: false,
-        priority: "medium",
-        project: newTaskProject,
-        dueDate: null,
-        labels: []
-      };
-      tasks = [...tasks, newTask];
-      newTaskText = "";
+  async function addTask() {
+    if (newTaskText.trim() && selectedProjectId !== 0) {
+      const result = await lib.createTask(newTaskText.trim(), selectedProjectId);
+      if (result === 200) {
+        newTaskText = "";
+        loadData(); // Reload to show new task
+      } else {
+        alert('Failed to add task');
+      }
     }
   }
 
-  function deleteTask(taskId: number) {
-    tasks = tasks.filter(task => task.id !== taskId);
+  async function deleteTask(taskId: number) {
+    const result = await lib.deleteTask(taskId);
+    if (result === 200) {
+      loadData(); // Reload to remove deleted task
+    } else {
+      alert('Failed to delete task');
+    }
   }
 
   function handleKeydown(event) {
@@ -142,12 +102,11 @@
         on:keydown={handleKeydown}
       />
       <select
-        bind:value={newTaskProject}
+        bind:value={selectedProjectId}
         class="px-3 py-2 border border-gray-200 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent"
       >
-        <option value="Inbox">Inbox</option>
         {#each projects as project}
-          <option value={project}>{project}</option>
+          <option value={project.id}>{project.name}</option>
         {/each}
       </select>
       <button
@@ -173,7 +132,7 @@
     </div>
 
     <div class="text-sm text-gray-500">
-      {tasks.length} total {tasks.length === 1 ? 'task' : 'tasks'} across {projectNames.length} {projectNames.length === 1 ? 'project' : 'projects'}
+      {adaptedTasks.length} total {adaptedTasks.length === 1 ? 'task' : 'tasks'} across {projectNames.length} {projectNames.length === 1 ? 'project' : 'projects'}
     </div>
   </div>
 

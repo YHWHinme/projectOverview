@@ -5,48 +5,21 @@
   import * as lib from "../../lib/lib";
   import { onMount } from "svelte";
 
-  let projects: any[] = []; // TODO: Define Project interface
+  let dbProjects: lib.Projects[] = [];
+
+  // Adapted projects for ProjectCard
+  $: projects = dbProjects.map(project => ({
+    id: project.id,
+    name: project.name,
+    description: "", // DB doesn't have description
+    status: "Active", // Default status
+    progress: 0, // DB doesn't have progress
+    dueDate: "", // DB doesn't have dueDate
+    team: [] // DB doesn't have team
+  }));
 
   async function loadProjects() {
-    // For now, keep mock data; replace with DB load when getProjects is added
-    projects = [
-      {
-        id: 1,
-        name: "Website Redesign",
-        description: "Complete overhaul of the company website with modern design",
-        status: "In Progress",
-        progress: 65,
-        dueDate: "2024-02-15",
-        team: ["Alice", "Bob", "Carol"]
-      },
-      {
-        id: 2,
-        name: "Mobile App Development",
-        description: "Cross-platform mobile application for iOS and Android",
-        status: "Planning",
-        progress: 25,
-        dueDate: "2024-03-30",
-        team: ["David", "Eve"]
-      },
-      {
-        id: 3,
-        name: "Database Migration",
-        description: "Migrate legacy database to new cloud infrastructure",
-        status: "Completed",
-        progress: 100,
-        dueDate: "2024-01-10",
-        team: ["Frank", "Grace"]
-      },
-      {
-        id: 4,
-        name: "API Integration",
-        description: "Integrate third-party APIs for enhanced functionality",
-        status: "On Hold",
-        progress: 45,
-        dueDate: "2024-04-20",
-        team: ["Henry", "Iris", "Jack"]
-      }
-    ];
+    dbProjects = await lib.getProjects();
   }
 
   onMount(loadProjects);
@@ -63,9 +36,6 @@
 
   <!-- Add Project Component -->
   <AddProject on:add={loadProjects} />
-
-  <!-- Add Client Component -->
-  <AddClient on:add={loadProjects} />
 
   <!-- Projects Grid -->
   <div class="grid grid-cols-1 md:grid-cols-2 gap-6">

@@ -2,17 +2,41 @@ import Database from "@tauri-apps/plugin-sql";
 
 const db = Database.load("sqlite:data.db");
 
-export interface Task {
+export interface Tasks {
   id: number;
   title: string;
+  complete: number;
   project_id: number;
   parent_id?: number;
 }
 
+export interface Projects {
+  id: number;
+  name: string;
+  client_id: number;
+}
+
+export interface Clients {
+  id: number;
+  name: string;
+  projectNumber: number;
+}
+
 // For getting all tasks
-export async function getTasks(): Promise<Task[]> {
+export async function getTasks(): Promise<Tasks[]> {
   const result = await (await db).select("SELECT * FROM tasks;");
-  return result as Task[];
+  return result as Tasks[];
+}
+// For getting all projects
+export async function getProjects(): Promise<Projects[]> {
+  const result = await (await db).select("SELECT * FROM projects;");
+  return result as Projects[];
+}
+
+// For getting all clients
+export async function getClients(): Promise<Clients[]> {
+  const result = await (await db).select("SELECT * FROM clients;");
+  return result as Clients[];
 }
 
 // For deleting tasks
