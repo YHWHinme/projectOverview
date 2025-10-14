@@ -76,11 +76,11 @@ export async function createTask(
 }
 
 // Creating a new project
-export async function createProject(name: string) {
+export async function createProject(name: string, clientId: number = 0) {
   try {
     await (
       await db
-    ).execute("INSERT INTO projects(name, client_id ) VALUES(?)", [name]);
+    ).execute("INSERT INTO projects(name, client_id) VALUES(?, ?)", [name, clientId]);
     return 200;
   } catch (error) {
     console.log(error);

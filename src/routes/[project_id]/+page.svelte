@@ -13,9 +13,7 @@
 	$: projectId = parseInt($page.params.project_id || "0");
 
 	async function loadTasks() {
-		const allTasks = await lib.getTasks();
-		// Filters all tasks to get whatever the project id is
-		tasks = allTasks.filter((task) => task.project_id === projectId);
+		tasks = await lib.getProjectTask(projectId);
 	}
 
 	onMount(async () => {

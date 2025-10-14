@@ -32,10 +32,12 @@
 >
 	<!-- Project Header -->
 	<div class="flex justify-between items-start mb-4">
-		<!-- TODO:  Insert the callback function as on:click making the project.name clickable   -->
-		<h3 class="text-lg font-semibold text-gray-800">
+		<button
+			class="text-lg font-semibold text-gray-800 cursor-pointer hover:text-blue-600 transition-colors text-left"
+			on:click={() => goto(`/${project.id}`)}
+		>
 			{project.name}
-		</h3>
+		</button>
 		<span
 			class="px-2 py-1 rounded-full text-xs font-medium {getStatusColor(
 				project.status,
