@@ -24,7 +24,7 @@
   }
 </script>
 
-<div class="add-project-form">
+<form class="add-project-form" on:submit|preventDefault={addProject}>
   <input
     bind:value={name}
     placeholder="Project name..."
@@ -37,8 +37,8 @@
       <option value={client.id}>{client.name}</option>
     {/each}
   </select>
-  <button on:click={addProject} class="add-project-btn">Add Project</button>
-</div>
+  <button type="submit" class="add-project-btn">Add Project</button>
+</form>
 
 <style>
   .add-project-form {

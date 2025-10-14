@@ -18,15 +18,15 @@
   }
 </script>
 
-<div class="add-client-form">
-  <input 
-    bind:value={name} 
-    placeholder="Client name..." 
-    class="add-client-input" 
-    required 
+<form class="add-client-form" on:submit|preventDefault={addClient}>
+  <input
+    bind:value={name}
+    placeholder="Client name..."
+    class="add-client-input"
+    required
   />
-  <button on:click={addClient} class="add-client-btn">Add Client</button>
-</div>
+  <button type="submit" class="add-client-btn">Add Client</button>
+</form>
 
 <style>
   .add-client-form {

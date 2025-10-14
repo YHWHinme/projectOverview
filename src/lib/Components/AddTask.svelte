@@ -20,15 +20,15 @@
   }
 </script>
 
-<div class="add-task-form">
+<form class="add-task-form" on:submit|preventDefault={addTask}>
   <input
     bind:value={title}
     placeholder="Add a new task..."
     class="add-task-input"
     required
   />
-  <button on:click={addTask} class="add-task-btn">Add</button>
-</div>
+  <button type="submit" class="add-task-btn">Add</button>
+</form>
 
 <style>
   .add-task-form {
