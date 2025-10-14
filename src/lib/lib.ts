@@ -2,6 +2,7 @@ import Database from "@tauri-apps/plugin-sql";
 
 const db = Database.load("sqlite:data.db");
 
+// NOTE: Tasks acquire functions
 export interface Tasks {
   id: number;
   title: string;
@@ -10,30 +11,37 @@ export interface Tasks {
   parent_id?: number;
 }
 
+export async function getTasks(): Promise<Tasks[]> {
+  const result = await (await db).select("SELECT * FROM tasks;");
+  return result as Tasks[];
+}
+
+export async function getProjectTask(project_id: number): Promise<Tasks[]> {
+  const result = await (
+    await db
+  ).select("SELECT * FROM tasks WHERE project_id=?;", [project_id]);
+  return result as Tasks[];
+}
+
+// For getting all projects
 export interface Projects {
   id: number;
   name: string;
   client_id: number;
 }
 
-export interface Clients {
-  id: number;
-  name: string;
-  projectNumber: number;
-}
-
-// For getting all tasks
-export async function getTasks(): Promise<Tasks[]> {
-  const result = await (await db).select("SELECT * FROM tasks;");
-  return result as Tasks[];
-}
-// For getting all projects
 export async function getProjects(): Promise<Projects[]> {
   const result = await (await db).select("SELECT * FROM projects;");
   return result as Projects[];
 }
 
 // For getting all clients
+export interface Clients {
+  id: number;
+  name: string;
+  projectNumber: number;
+}
+
 export async function getClients(): Promise<Clients[]> {
   const result = await (await db).select("SELECT * FROM clients;");
   return result as Clients[];
@@ -68,13 +76,11 @@ export async function createTask(
 }
 
 // Creating a new project
-export async function createProject(name: string ) {
+export async function createProject(name: string) {
   try {
     await (
       await db
-    ).execute("INSERT INTO projects(name, client_id ) VALUES(?)", [
-      name
-    ]);
+    ).execute("INSERT INTO projects(name, client_id ) VALUES(?)", [name]);
     return 200;
   } catch (error) {
     console.log(error);
@@ -86,9 +92,7 @@ export async function createClient(name: string) {
   try {
     await (
       await db
-    ).execute("INSERT INTO clients(name, projectNumber) VALUES(?,?)", [
-      name,
-    ]);
+    ).execute("INSERT INTO clients(name, projectNumber) VALUES(?,?)", [name]);
     return 200;
   } catch (error) {
     console.log(error);

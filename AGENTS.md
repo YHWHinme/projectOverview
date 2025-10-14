@@ -121,3 +121,36 @@
   - Added migrations in `lib.rs` for automatic table creation
   - Fixed TypeScript errors and reactive updates
 - **Result**: Functional CRUD operations for tasks/projects/clients, with proper error handling and UI consistency
+
+### Project Navigation and Dynamic Page Optimization
+- **Completed**: Clickable project cards and optimized task filtering
+- **Duration**: Single session implementation
+- **Project Card Navigation**:
+  - Made project titles clickable in `ProjectCard.svelte`
+  - Changed `<h3>` to `<button>` element for accessibility compliance
+  - Added `on:click={() => goto(\`/\${project.id}\`)}` navigation handler
+  - Added hover styling (`hover:text-blue-600`) for better UX
+- **Dynamic Page Optimization**:
+  - Updated `routes/[project_id]/+page.svelte` to use `getProjectTask(projectId)` instead of fetching all tasks and filtering
+  - Improved performance by moving filtering to database level
+  - Reduced unnecessary data transfer and processing
+- **Result**: Seamless navigation between project overview and individual project pages, with efficient task loading
+
+### Project Creation Client Selection
+- **Completed**: Added client selection dropdown to project creation
+- **Duration**: Single session implementation
+- **Backend Fix**:
+  - Updated `createProject()` function to accept `clientId: number = 0` parameter
+  - Fixed SQL query to insert both name and client_id values: `VALUES(?, ?)`
+  - Resolved "1 values for 2 columns" database error
+- **Frontend Enhancement**:
+  - Added client selection dropdown in `AddProject.svelte` similar to task creation
+  - Imported `onMount` and added client loading logic
+  - Added `<select>` with "No Client" option (value 0) and client list
+  - Updated form submission to pass `selectedClientId`
+  - Added consistent styling with `.add-project-select` class
+- **UX Features**:
+  - Client selection is optional (defaults to 0 = "No Client")
+  - Dropdown populates dynamically from database
+  - Maintains existing form layout and styling
+- **Result**: Projects can now be associated with clients during creation, fixing SQL errors and providing requested functionality
