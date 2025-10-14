@@ -22,7 +22,7 @@
 </script>
 
 <!-- Add Task Component -->
-<AddTask on:add={loadTasks} />
+<AddTask projectId={projectId} on:add={loadTasks} />
 
 <!-- Checking if there are tasks -->
 {#if tasks.length === 0}

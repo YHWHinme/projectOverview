@@ -1,23 +1,16 @@
 <script lang="ts">
   import * as lib from "$lib/lib";
-  import { createEventDispatcher, onMount } from "svelte";
+  import { createEventDispatcher } from "svelte";
 
   const dispatch = createEventDispatcher();
 
-  let title = "";
-  let projects: lib.Projects[] = [];
-  let selectedProjectId: number = 0;
+  export let projectId: number;
 
-  onMount(async () => {
-    projects = await lib.getProjects();
-    if (projects.length > 0) {
-      selectedProjectId = projects[0].id;
-    }
-  });
+  let title = "";
 
   async function addTask() {
-    if (!title.trim() || selectedProjectId === 0) return;
-    const result = await lib.createTask(title, selectedProjectId);
+    if (!title.trim()) return;
+    const result = await lib.createTask(title, projectId);
     if (result === 200) {
       title = ""; // Clear input
       dispatch('add');
@@ -34,11 +27,6 @@
     class="add-task-input"
     required
   />
-  <select bind:value={selectedProjectId} class="add-task-select">
-    {#each projects as project}
-      <option value={project.id}>{project.name}</option>
-    {/each}
-  </select>
   <button on:click={addTask} class="add-task-btn">Add</button>
 </div>
 
@@ -48,9 +36,6 @@
   }
   .add-task-input {
     @apply flex-1 px-3 py-1 text-sm text-gray-800 border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-gray-500;
-  }
-  .add-task-select {
-    @apply px-3 py-1 text-sm text-gray-800 border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-gray-500;
   }
   .add-task-btn {
     @apply px-3 py-1 bg-gray-500 text-white text-sm rounded hover:bg-gray-600 transition-colors flex-shrink-0;

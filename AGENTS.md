@@ -154,3 +154,37 @@
   - Dropdown populates dynamically from database
   - Maintains existing form layout and styling
 - **Result**: Projects can now be associated with clients during creation, fixing SQL errors and providing requested functionality
+
+### Context-Aware Task Creation
+- **Completed**: Removed project selection dropdown from task creation, made it context-aware
+- **Duration**: Single session implementation
+- **Component Simplification**:
+  - Removed `onMount`, `projects` state, and `selectedProjectId` from `AddTask.svelte`
+  - Added `export let projectId: number` prop for explicit project context
+  - Removed `<select>` dropdown and `.add-task-select` CSS styling
+  - Simplified form to just input + button layout
+- **Context Integration**:
+  - Updated `routes/[project_id]/+page.svelte` to pass `projectId` prop to `AddTask`
+  - Tasks now automatically assign to the current project context
+- **Benefits**:
+  - **Streamlined UX**: No manual project selection needed in project-specific contexts
+  - **Reduced Complexity**: AddTask component is now simpler and more focused
+  - **Explicit Context**: Project association is clear and enforced by component usage
+  - **Future-Proof**: Component can be reused with explicit project context anywhere
+- **Result**: Task creation is now seamless within project pages, eliminating dropdown friction while maintaining flexibility for other use cases
+
+### Task Reload Bug Fix
+- **Completed**: Fixed task list not updating after adding new tasks
+- **Duration**: Single session implementation
+- **Issue Identified**:
+  - `createTask()` function was missing `await` for database execute operation
+  - Function returned `200` before database insert completed
+  - `loadTasks()` ran immediately after, before new task was saved
+  - UI appeared to succeed but didn't show new tasks
+- **Fix Applied**:
+  - Added missing `await` to `(await db).execute()` call in `createTask`
+  - Now properly waits for database operation to complete before returning success
+- **Verification**:
+  - Other create functions (`createProject`, `createClient`) already had correct awaiting
+  - `createTask` was the only one missing the outer `await`
+- **Result**: Task creation now properly waits for database completion, ensuring UI updates immediately with new tasks

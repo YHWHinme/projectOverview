@@ -64,7 +64,7 @@ export async function createTask(
   parent_id?: number,
 ) {
   try {
-    (await db).execute(
+    await (await db).execute(
       "INSERT INTO tasks(title, project_id, parent_id) VALUES(?,?,?)",
       [title, project_id, parent_id],
     );
