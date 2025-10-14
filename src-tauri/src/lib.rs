@@ -5,7 +5,7 @@ pub fn run() {
     let migrations = vec![
         // Define your migrations here
         Migration {
-            version: 2,
+            version: 3,
             description: "create_initial_tables",
             sql: include_str!("../database/schema.sql"),
             kind: MigrationKind::Up,

@@ -5,14 +5,12 @@
   const dispatch = createEventDispatcher();
   
   let name = "";
-  let projectNumber = 0;
   
   async function addClient() {
     if (!name.trim()) return;
-    const result = await lib.createClient(name, projectNumber);
+    const result = await lib.createClient(name);
     if (result === 200) {
       name = ""; // Clear input
-      projectNumber = 0;
       dispatch('add');
     } else {
       alert('Failed to add client');
@@ -26,13 +24,6 @@
     placeholder="Client name..." 
     class="add-client-input" 
     required 
-  />
-  <input 
-    bind:value={projectNumber} 
-    type="number" 
-    placeholder="Project number" 
-    class="add-client-input" 
-    min="0" 
   />
   <button on:click={addClient} class="add-client-btn">Add Client</button>
 </div>

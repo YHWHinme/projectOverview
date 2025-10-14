@@ -4,12 +4,11 @@
   
   const dispatch = createEventDispatcher();
   
-  export let clientId = 1; // Default client ID
   let name = "";
   
   async function addProject() {
     if (!name.trim()) return;
-    const result = await lib.createProject(name, clientId);
+    const result = await lib.createProject(name);
     if (result === 200) {
       name = ""; // Clear input
       dispatch('add');

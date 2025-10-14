@@ -68,13 +68,12 @@ export async function createTask(
 }
 
 // Creating a new project
-export async function createProject(name: string, client_id: number) {
+export async function createProject(name: string ) {
   try {
     await (
       await db
-    ).execute("INSERT INTO projects(name, client_id ) VALUES(?,?)", [
-      name,
-      client_id,
+    ).execute("INSERT INTO projects(name, client_id ) VALUES(?)", [
+      name
     ]);
     return 200;
   } catch (error) {
@@ -83,13 +82,12 @@ export async function createProject(name: string, client_id: number) {
   }
 }
 
-export async function createClient(name: string, projectNumber: number) {
+export async function createClient(name: string) {
   try {
     await (
       await db
     ).execute("INSERT INTO clients(name, projectNumber) VALUES(?,?)", [
       name,
-      projectNumber,
     ]);
     return 200;
   } catch (error) {
