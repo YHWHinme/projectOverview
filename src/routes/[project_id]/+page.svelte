@@ -21,6 +21,21 @@
 		projectName = project ? project.name : "Unknown";
 	}
 
+	// TODO: Access the value from check task complete and update the complete boolean after
+	async function handleToggle(event: any) {
+		const taskId = event.detail;
+		const task = tasks.find((t) => t.id === taskId);
+		if (task) {
+			const newComplete = task.complete === 1 ? 0 : 1;
+			const result = await lib.updateTaskComplete(taskId, newComplete);
+			if (result === 200) {
+				loadTasks();
+			} else {
+				alert("Failed to update task");
+			}
+		}
+	}
+
 	async function handleDelete(event: any) {
 		const result = await lib.deleteTask(event.detail);
 		if (result === 200) {

@@ -28,6 +28,19 @@ export async function renameTask(newName: string, taskId: number) {
   }
 }
 
+// TODO: Add a return function options for number and Promise for Tasks[]
+export async function checkTaskComplete(taskId: number) {
+  try {
+    const result = await (
+      await db
+    ).select("SELECT * FROM tasks WHERE id = ?", [taskId]);
+    return result as Tasks[];
+  } catch (error) {
+    console.log(error);
+    return 500;
+  }
+}
+
 export async function updateTaskComplete(taskId: number, complete: number) {
   try {
     await (
