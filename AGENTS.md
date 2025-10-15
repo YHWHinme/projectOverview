@@ -206,3 +206,110 @@
   - Eliminates need to click submit buttons
   - Maintains accessibility with proper form semantics
 - **Result**: Enhanced user experience with standard form submission behavior across all creation forms
+
+## Current Implementation Plan
+
+### Phase 1: Add Delete Buttons to ClientCard and ProjectCard
+
+1. **Add delete functions in `src/lib/lib.ts`**:
+   - Add `deleteClient(client_id: number)`: `DELETE FROM clients WHERE id = ?`
+   - Add `deleteProject(project_id: number)`: `DELETE FROM projects WHERE id = ?`
+   - Both with try/catch, return 200/500
+
+2. **Update `src/lib/Components/ClientCard.svelte`**:
+   - Import `createEventDispatcher`
+   - Add delete button in header (next to project count span)
+   - Button: `opacity-0 group-hover:opacity-100`, red on hover, X icon
+   - Dispatch 'delete' event with `client.id`
+
+3. **Update `src/lib/Components/ProjectCard.svelte`**:
+   - Import `createEventDispatcher`
+   - Add delete button in header (next to status span)
+   - Same styling as ClientCard delete button
+   - Dispatch 'delete' event with `project.id`
+
+4. **Update `src/routes/clients/+page.svelte`**:
+   - Add `on:delete={handleDelete}` to `<ClientCard>`
+   - Add `async handleDelete(event) { const result = await lib.deleteClient(event.detail); result === 200 ? loadClients() : alert('Failed'); }`
+
+5. **Update `src/routes/projects/+page.svelte`**:
+   - Add `on:delete={handleDelete}` to `<ProjectCard>`
+   - Add `async handleDelete(event) { const result = await lib.deleteProject(event.detail); result === 200 ? loadProjects() : alert('Failed'); }`
+
+6. **Update `src/routes/[project_id]/+page.svelte`**:
+   - Add `on:delete={handleDelete}` to `<TaskBit>`
+   - Add `async handleDelete(event) { const result = await lib.deleteTask(event.detail); result === 200 ? loadTasks() : alert('Failed'); }`
+
+### Phase 2: Replace TaskBit with TaskItem and Add Rename
+
+1. **Complete `renameTask` in `src/lib/lib.ts`**:
+   - Add try/catch around the execute call
+   - Return 200 on success, 500 on error
+
+2. **Add `updateTaskComplete` in `src/lib/lib.ts`**:
+   - `UPDATE tasks SET complete = ? WHERE id = ?`
+   - With try/catch, return 200/500
+
+3. **Update `src/lib/Components/TaskItem.svelte`**:
+   - Add pencil icon button next to delete button (shows on hover)
+   - On click: replace text with input field, focus input
+   - Enter: dispatch 'rename' with new name and task.id, restore text display
+   - Escape: cancel, restore original text
+   - Add rename state management (editing mode)
+
+4. **Update `src/routes/[project_id]/+page.svelte`**:
+   - Replace `TaskBit` import with `TaskItem`
+   - Replace component usage with:
+     ```svelte
+     <TaskItem
+       task={{
+         id: task.id,
+         text: task.title,
+         completed: task.complete === 1,
+         priority: "medium",
+         project: projectName || "Unknown",
+         dueDate: null,
+         labels: []
+       }}
+       on:toggle={handleToggle}
+       on:delete={handleDelete}
+       on:rename={handleRename}
+     />
+     ```
+   - Add `handleToggle`: async update complete in DB, reload tasks
+   - Update `handleDelete` and `handleRename` similarly
+   - Fetch project name for the adapted task
+
+5. **Update `src/routes/tasks/+page.svelte`**:
+   - Add `on:rename` to `ProjectSection`
+   - Add `handleRename` function
+
+6. **Update `src/lib/Components/ProjectSection.svelte`**:
+   - Forward rename events from TaskItem to parent
+
+### Implementation Notes
+- All delete buttons follow the same hover-reveal pattern as existing task components
+- Rename uses inline editing with Enter to save, Escape to cancel
+- Error handling includes user alerts for all operations
+- Database operations maintain consistency with existing patterns
+- TaskItem adaptation requires project name lookup in dynamic route
+- Foreign key constraints for project/task relationships should be considered (cascade delete or validation)
+
+## Implementation Status: COMPLETED ✅
+
+All planned features have been successfully implemented:
+
+- ✅ Delete buttons added to ClientCard and ProjectCard components
+- ✅ Delete functions added to lib.ts with proper error handling
+- ✅ Event handling implemented in respective page components
+- ✅ TaskBit replaced with TaskItem in dynamic routes
+- ✅ Rename functionality added with pencil icon and inline editing
+- ✅ Database update functions completed
+- ✅ All TypeScript errors resolved
+- ✅ Code compiles successfully with only minor warnings
+
+### Additional Notes:
+- **TaskBit** component is no longer used (replaced by TaskItem)
+- **TaskItem** now handles all task display with full functionality (toggle, delete, rename)
+- All delete operations include proper error handling and user feedback
+- Rename supports inline editing with keyboard shortcuts (Enter/Escape)

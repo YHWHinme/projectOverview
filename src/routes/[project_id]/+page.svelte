@@ -3,17 +3,41 @@
 	import type { Tasks } from "../../lib/lib";
 	import { onMount } from "svelte";
 	import { page } from "$app/stores";
-	import TaskBit from "$lib/Components/TaskBit.svelte";
+	import TaskItem from "$lib/Components/TaskItem.svelte";
 	import AddTask from "$lib/Components/AddTask.svelte";
 
 	let tasks: Tasks[] = [];
 	let projectId: number;
+	let projectName: string = "Unknown";
 
 	// Binds whatever the dynamic id is to projectId or zero
 	$: projectId = parseInt($page.params.project_id || "0");
 
 	async function loadTasks() {
 		tasks = await lib.getProjectTask(projectId);
+		// Get project name
+		const projects = await lib.getProjects();
+		const project = projects.find((p) => p.id === projectId);
+		projectName = project ? project.name : "Unknown";
+	}
+
+	async function handleDelete(event: any) {
+		const result = await lib.deleteTask(event.detail);
+		if (result === 200) {
+			loadTasks();
+		} else {
+			alert("Failed to delete task");
+		}
+	}
+
+	async function handleRename(event: any) {
+		const { id, name } = event.detail;
+		const result = await lib.renameTask(name, id);
+		if (result === 200) {
+			loadTasks();
+		} else {
+			alert("Failed to rename task");
+		}
 	}
 
 	onMount(async () => {
@@ -22,7 +46,7 @@
 </script>
 
 <!-- Add Task Component -->
-<AddTask projectId={projectId} on:add={loadTasks} />
+<AddTask {projectId} on:add={loadTasks} />
 
 <!-- Checking if there are tasks -->
 {#if tasks.length === 0}
@@ -31,7 +55,20 @@
 	<!-- Displaying the tasks -->
 	{#each tasks as task}
 		<div>
-			<TaskBit id={task.id} title={task.title} projectId={task.project_id} />
+			<TaskItem
+				task={{
+					id: task.id,
+					text: task.title,
+					completed: task.complete === 1,
+					priority: "medium",
+					project: projectName,
+					dueDate: null,
+					labels: [],
+				}}
+				on:toggle={handleToggle}
+				on:delete={handleDelete}
+				on:rename={handleRename}
+			/>
 		</div>
 	{/each}
 {/if}

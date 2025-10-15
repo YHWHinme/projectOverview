@@ -13,12 +13,48 @@
 
   const dispatch = createEventDispatcher();
 
+  let isEditing = false;
+  let editValue = task.text;
+
   function toggleTask() {
     dispatch('toggle', task.id);
   }
 
   function deleteTask() {
     dispatch('delete', task.id);
+  }
+
+  function startRename() {
+    isEditing = true;
+    editValue = task.text;
+  }
+
+  function saveRename() {
+    if (editValue.trim() && editValue !== task.text) {
+      dispatch('rename', { id: task.id, name: editValue.trim() });
+    }
+    isEditing = false;
+  }
+
+  function cancelRename() {
+    isEditing = false;
+    editValue = task.text;
+  }
+
+  function handleKeydown(event: any) {
+    if (event.key === 'Enter') {
+      saveRename();
+    } else if (event.key === 'Escape') {
+      cancelRename();
+    }
+  }
+
+  function focusInput(node: HTMLInputElement) {
+    // Focus and select all text
+    setTimeout(() => {
+      node.focus();
+      node.select();
+    }, 0);
   }
 
   function getPriorityColor(priority: string) {
@@ -69,23 +105,49 @@
   <!-- Task Content -->
   <div class="flex-1 min-w-0">
     <div class="flex items-center justify-between">
-      <p
-        class="text-gray-800 text-sm"
-        class:line-through={task.completed}
-        class:text-gray-500={task.completed}
-      >
-        {task.text}
-      </p>
-      
-      <!-- Delete button (shows on hover) -->
-      <button
-        on:click={deleteTask}
-        class="opacity-0 group-hover:opacity-100 text-gray-400 hover:text-red-500 transition-all p-1 flex-shrink-0"
-      >
-        <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
-          <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd" />
-        </svg>
-      </button>
+      {#if isEditing}
+        <input
+          bind:value={editValue}
+          on:keydown={handleKeydown}
+          on:blur={saveRename}
+          class="text-gray-800 text-sm bg-transparent border-b border-gray-300 focus:outline-none focus:border-blue-500 flex-1"
+          use:focusInput
+        />
+      {:else}
+        <p
+          on:dblclick={startRename}
+          class="text-gray-800 text-sm cursor-pointer"
+          class:line-through={task.completed}
+          class:text-gray-500={task.completed}
+        >
+          {task.text}
+        </p>
+      {/if}
+
+      <!-- Action buttons -->
+      <div class="flex items-center space-x-1">
+        <!-- Rename button (shows on hover) -->
+        {#if !isEditing}
+          <button
+            on:click={startRename}
+            class="opacity-0 group-hover:opacity-100 text-gray-400 hover:text-blue-500 transition-all p-1 flex-shrink-0"
+          >
+            <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
+              <path d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z" />
+            </svg>
+          </button>
+        {/if}
+
+        <!-- Delete button (shows on hover) -->
+        <button
+          on:click={deleteTask}
+          class="opacity-0 group-hover:opacity-100 text-gray-400 hover:text-red-500 transition-all p-1 flex-shrink-0"
+        >
+          <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
+            <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd" />
+          </svg>
+        </button>
+      </div>
     </div>
 
     <!-- Task metadata -->

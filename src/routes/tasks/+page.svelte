@@ -73,7 +73,16 @@
     }
   }
 
-  function handleKeydown(event) {
+  async function renameTask({ id, name }: { id: number; name: string }) {
+    const result = await lib.renameTask(name, id);
+    if (result === 200) {
+      loadData(); // Reload to show renamed task
+    } else {
+      alert('Failed to rename task');
+    }
+  }
+
+  function handleKeydown(event: any) {
     if (event.key === 'Enter') {
       addTask();
     }
@@ -140,12 +149,13 @@
   <div class="bg-white rounded-lg shadow-sm border p-6">
     {#if projectNames.length > 0}
       {#each projectNames as projectName (projectName)}
-        <ProjectSection 
+        <ProjectSection
           project={projectName}
           tasks={tasksByProject[projectName]}
           {showCompleted}
           on:task-toggle={(e) => toggleTask(e.detail)}
           on:task-delete={(e) => deleteTask(e.detail)}
+          on:task-rename={(e) => renameTask(e.detail)}
         />
       {/each}
     {:else}

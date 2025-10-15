@@ -10,6 +10,15 @@
     clients = await lib.getClients();
   }
 
+  async function handleDelete(event: any) {
+    const result = await lib.deleteClient(event.detail);
+    if (result === 200) {
+      loadClients();
+    } else {
+      alert('Failed to delete client');
+    }
+  }
+
   onMount(loadClients);
 </script>
 
@@ -25,12 +34,12 @@
   <!-- Add Client Component -->
   <AddClient on:add={loadClients} />
 
-  <!-- Clients Grid -->
-  <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-    {#each clients as client (client.id)}
-      <ClientCard {client} />
-    {/each}
-  </div>
+   <!-- Clients Grid -->
+   <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+     {#each clients as client (client.id)}
+       <ClientCard {client} on:delete={handleDelete} />
+     {/each}
+   </div>
 
   <!-- Empty State (if no clients) -->
   {#if clients.length === 0}

@@ -22,6 +22,15 @@
 		dbProjects = await lib.getProjects();
 	}
 
+	async function handleDelete(event: any) {
+		const result = await lib.deleteProject(event.detail);
+		if (result === 200) {
+			loadProjects();
+		} else {
+			alert("Failed to delete project");
+		}
+	}
+
 	onMount(loadProjects);
 </script>
 
@@ -34,13 +43,14 @@
 		<h1 class="text-3xl font-bold text-gray-800">Projects</h1>
 	</div>
 
+	<!-- TODO: Add Title of the Project -->
 	<!-- Add Project Component -->
 	<AddProject on:add={loadProjects} />
 
 	<!-- Projects Grid -->
 	<div class="grid grid-cols-1 md:grid-cols-2 gap-6">
 		{#each projects as project (project.id)}
-			<ProjectCard {project} />
+			<ProjectCard {project} on:delete={handleDelete} />
 		{/each}
 	</div>
 

@@ -26,12 +26,16 @@
     isCollapsed = !isCollapsed;
   }
 
-  function handleTaskToggle(event) {
+  function handleTaskToggle(event: any) {
     dispatch('task-toggle', event.detail);
   }
 
-  function handleTaskDelete(event) {
+  function handleTaskDelete(event: any) {
     dispatch('task-delete', event.detail);
+  }
+
+  function handleTaskRename(event: any) {
+    dispatch('task-rename', event.detail);
   }
 </script>
 
@@ -73,10 +77,11 @@
     <div class="border-l-2 border-gray-200 ml-2">
       {#if filteredTasks.length > 0}
         {#each filteredTasks as task (task.id)}
-          <TaskItem 
-            {task} 
+          <TaskItem
+            {task}
             on:toggle={handleTaskToggle}
             on:delete={handleTaskDelete}
+            on:rename={handleTaskRename}
           />
         {/each}
       {:else}
