@@ -209,6 +209,35 @@
 
 ## Current Implementation Plan
 
+### Phase 0: Implement Recursive Task Selection (Parent-Child Relationships)
+
+1. **Update Tasks interface in `src/lib/lib.ts`**:
+   - Add `children?: Tasks[]` property to support hierarchical structure
+
+2. **Create task tree building functions in `src/lib/lib.ts`**:
+   - `buildTaskTree(tasks: Tasks[]): Tasks[]` - converts flat task array to hierarchical tree
+   - `flattenTaskTree(tasks: Tasks[]): Tasks[]` - converts tree back to flat array for operations
+
+3. **Update task display components**:
+   - Modify `ProjectSection.svelte` to render hierarchical task tree with proper indentation
+   - Add recursive rendering logic for parent-child relationships
+   - Implement visual hierarchy with nested indentation and connecting lines
+
+4. **Update task creation UI**:
+   - Add parent task selection dropdown in `AddTask.svelte`
+   - Filter dropdown to show only tasks from current project
+   - Allow selecting "No Parent" for root-level tasks
+
+5. **Update task operations for hierarchy**:
+   - Modify delete operations to handle cascading deletes (delete children when parent is deleted)
+   - Update task movement/renaming to maintain hierarchical integrity
+   - Ensure toggle operations work correctly with nested tasks
+
+6. **Database considerations**:
+   - Verify `parent_id` foreign key constraints are properly set
+   - Consider adding database triggers for cascade operations if needed
+   - Ensure recursive queries don't cause performance issues
+
 ### Phase 1: Add Delete Buttons to ClientCard and ProjectCard
 
 1. **Add delete functions in `src/lib/lib.ts`**:
@@ -295,9 +324,29 @@
 - TaskItem adaptation requires project name lookup in dynamic route
 - Foreign key constraints for project/task relationships should be considered (cascade delete or validation)
 
-## Implementation Status: COMPLETED ✅
+## Implementation Status: IN PROGRESS 🚧
 
-All planned features have been successfully implemented:
+### Completed Features ✅
+All previously planned features have been successfully implemented:
+
+- ✅ Delete buttons added to ClientCard and ProjectCard components
+- ✅ Delete functions added to lib.ts with proper error handling
+- ✅ Event handling implemented in respective page components
+- ✅ TaskBit replaced with TaskItem in dynamic routes
+- ✅ Rename functionality added with pencil icon and inline editing
+- ✅ Database update functions completed
+- ✅ All TypeScript errors resolved
+- ✅ Code compiles successfully with only minor warnings
+
+### Next Priority: Recursive Task Selection 🔄
+- ⏳ **Phase 0**: Implement recursive task selection for parent-child relationships
+- ⏳ **Modal Implementation**: Add dynamic project details modal (currently paused)
+
+### Additional Notes:
+- **TaskBit** component is no longer used (replaced by TaskItem)
+- **TaskItem** now handles all task display with full functionality (toggle, delete, rename)
+- All delete operations include proper error handling and user feedback
+- Rename supports inline editing with keyboard shortcuts (Enter/Escape)
 
 - ✅ Delete buttons added to ClientCard and ProjectCard components
 - ✅ Delete functions added to lib.ts with proper error handling

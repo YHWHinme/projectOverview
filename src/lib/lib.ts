@@ -135,6 +135,19 @@ export async function getProjectItem(): Promise<Projects[]> {
   return result as Projects[];
 }
 
+export async function updateProjectDescription(
+  projectId: number,
+  projectDescription: string,
+): Promise<Projects[]> {
+  const result = await (
+    await db
+  ).select("UPDATE projects SET description=? WHERE id=?", [
+    projectId,
+    projectDescription,
+  ]);
+  return result as Projects[];
+}
+
 // NOTE: Client based functions
 export interface Clients {
   id: number;
