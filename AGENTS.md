@@ -207,6 +207,45 @@
   - Maintains accessibility with proper form semantics
 - **Result**: Enhanced user experience with standard form submission behavior across all creation forms
 
+### Dynamic Project Details Modal
+- **Completed**: Implemented dynamic modal for project details
+- **Duration**: Single session implementation
+- **Components Created**:
+  - `ProjectModal.svelte`: Modal component with overlay, project details display
+  - `stores/modal.ts`: Svelte store for modal state management
+- **Features**:
+  - **Dynamic Content**: Shows name, description, due date, status, progress, and team
+  - **Null Handling**: Gracefully displays "No description available" or "No due date set" for empty fields
+  - **Accessibility**: Keyboard navigation (Escape to close), click-outside-to-close, proper ARIA labels
+  - **Responsive Design**: Mobile-friendly with proper spacing and overflow handling
+  - **State Management**: Clean store-based approach for opening/closing modal
+- **Integration**:
+  - Updated `ProjectCard.svelte` "View Details" button to trigger modal
+  - Added modal to `/projects/+page.svelte`
+  - Fixed database integration to properly fetch `dueDate` field
+- **Database Updates**:
+  - Updated `Projects` interface to include `dueDate: number`
+  - Modified `getProjectItem()` to select dueDate field
+  - Updated `createProject()` to accept description and dueDate parameters
+- **Result**: Users can now click "View Details" on any project card to see comprehensive project information in a clean, accessible modal interface
+
+### Edit Project Description Feature
+- **Completed**: Added inline editing for project descriptions using pencil icon method
+- **Duration**: Single session implementation
+- **Pattern**: Reused the same editing pattern as task renaming (pencil icon → inline textarea → Enter/Escape handling)
+- **Components Updated**:
+  - `ProjectModal.svelte`: Added editing state, pencil icon button, textarea input, keyboard handling
+  - `lib.ts`: Fixed `updateProjectDescription()` function (was using wrong SQL method and parameters)
+  - `projects/+page.svelte`: Added event handler for description updates
+- **Features**:
+  - Pencil icon appears next to "Description" header
+  - Click to enter edit mode with auto-focused textarea
+  - Enter saves changes, Escape cancels editing
+  - Blur also saves changes
+  - Real-time database updates with error handling
+  - Consistent UI/UX with task renaming functionality
+- **Result**: Users can now edit project descriptions directly in the modal using the familiar pencil icon interface
+
 ## Current Implementation Plan
 
 ### Phase 0: Implement Recursive Task Selection (Parent-Child Relationships)
@@ -340,7 +379,14 @@ All previously planned features have been successfully implemented:
 
 ### Next Priority: Recursive Task Selection 🔄
 - ⏳ **Phase 0**: Implement recursive task selection for parent-child relationships
-- ⏳ **Modal Implementation**: Add dynamic project details modal (currently paused)
+- ✅ **Modal Implementation**: Dynamic project details modal completed
+
+### Post-MVP Features 🎯
+- **Progress Bar Logic**: Implement dynamic progress calculation based on completed tasks within projects
+  - Calculate progress percentage from task completion ratios
+  - Update progress bars in real-time as tasks are completed
+  - Store progress in database vs. computed on-the-fly
+  - Add progress tracking to project creation and editing workflows
 
 ### Additional Notes:
 - **TaskBit** component is no longer used (replaced by TaskItem)

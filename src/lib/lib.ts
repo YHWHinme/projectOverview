@@ -10,6 +10,7 @@ export interface Tasks {
   description: number;
   project_id: number;
   parent_id?: number;
+  children?: Tasks[]; // For hierarchical display
 }
 
 export async function getTasks(): Promise<Tasks[]> {
@@ -22,6 +23,48 @@ export async function getProjectTask(project_id: number): Promise<Tasks[]> {
     await db
   ).select("SELECT * FROM tasks WHERE project_id=?;", [project_id]);
   return result as Tasks[];
+}
+
+// Build hierarchical task tree
+export function buildTaskTree(tasks: Tasks[]): Tasks[] {
+  const taskMap = new Map<number, Tasks>();
+  const rootTasks: Tasks[] = [];
+
+  // First pass: create map of all tasks
+  tasks.forEach(task => {
+    taskMap.set(task.id, { ...task, children: [] });
+  });
+
+  // Second pass: build hierarchy
+  tasks.forEach(task => {
+    const taskWithChildren = taskMap.get(task.id)!;
+    if (task.parent_id && taskMap.has(task.parent_id)) {
+      // This is a child task
+      const parent = taskMap.get(task.parent_id)!;
+      if (!parent.children) parent.children = [];
+      parent.children.push(taskWithChildren);
+    } else {
+      // This is a root task
+      rootTasks.push(taskWithChildren);
+    }
+  });
+
+  return rootTasks;
+}
+
+// Flatten task tree back to array (for operations that need flat structure)
+export function flattenTaskTree(tasks: Tasks[]): Tasks[] {
+  const result: Tasks[] = [];
+
+  function traverse(task: Tasks) {
+    result.push(task);
+    if (task.children) {
+      task.children.forEach(traverse);
+    }
+  }
+
+  tasks.forEach(traverse);
+  return result;
 }
 
 export async function renameTask(newName: string, taskId: number) {
@@ -102,6 +145,7 @@ export interface Projects {
   name: string;
   client_id: number;
   description: string;
+  dueDate: number;
 }
 
 export async function deleteProject(project_id: number) {
@@ -115,13 +159,15 @@ export async function deleteProject(project_id: number) {
 }
 
 // Creates a project
-export async function createProject(name: string, clientId: number = 0) {
+export async function createProject(name: string, clientId: number = 0, description: string = "", dueDate: number | null = null) {
   try {
     await (
       await db
-    ).execute("INSERT INTO projects(name, client_id) VALUES(?, ?)", [
+    ).execute("INSERT INTO projects(name, client_id, description, dueDate) VALUES(?, ?, ?, ?)", [
       name,
       clientId,
+      description,
+      dueDate,
     ]);
     return 200;
   } catch (error) {
@@ -131,21 +177,30 @@ export async function createProject(name: string, clientId: number = 0) {
 }
 
 export async function getProjectItem(): Promise<Projects[]> {
-  const result = await (await db).select("SELECT * FROM projects;");
+  const result = await (await db).select("SELECT id, name, client_id, description, dueDate FROM projects;");
   return result as Projects[];
+}
+
+export async function getProjects(): Promise<Projects[]> {
+  return await getProjectItem(); // Alias for consistency
 }
 
 export async function updateProjectDescription(
   projectId: number,
   projectDescription: string,
-): Promise<Projects[]> {
-  const result = await (
-    await db
-  ).select("UPDATE projects SET description=? WHERE id=?", [
-    projectId,
-    projectDescription,
-  ]);
-  return result as Projects[];
+) {
+  try {
+    await (
+      await db
+    ).execute("UPDATE projects SET description = ? WHERE id = ?", [
+      projectDescription,
+      projectId,
+    ]);
+    return 200;
+  } catch (error) {
+    console.log(error);
+    return 500;
+  }
 }
 
 // NOTE: Client based functions
