@@ -7,12 +7,20 @@ export interface Tasks {
   id: number;
   title: string;
   complete: number;
+  description: number;
   project_id: number;
   parent_id?: number;
 }
 
 export async function getTasks(): Promise<Tasks[]> {
   const result = await (await db).select("SELECT * FROM tasks;");
+  return result as Tasks[];
+}
+
+export async function getProjectTask(project_id: number): Promise<Tasks[]> {
+  const result = await (
+    await db
+  ).select("SELECT * FROM tasks WHERE project_id=?;", [project_id]);
   return result as Tasks[];
 }
 
@@ -93,13 +101,7 @@ export interface Projects {
   id: number;
   name: string;
   client_id: number;
-}
-
-export async function getProjectTask(project_id: number): Promise<Tasks[]> {
-  const result = await (
-    await db
-  ).select("SELECT * FROM tasks WHERE project_id=?;", [project_id]);
-  return result as Tasks[];
+  description: string;
 }
 
 export async function deleteProject(project_id: number) {
@@ -128,7 +130,7 @@ export async function createProject(name: string, clientId: number = 0) {
   }
 }
 
-export async function getProjects(): Promise<Projects[]> {
+export async function getProjectItem(): Promise<Projects[]> {
   const result = await (await db).select("SELECT * FROM projects;");
   return result as Projects[];
 }
@@ -168,18 +170,27 @@ export async function deleteClient(client_id: number) {
   }
 }
 
-// Schema for database
+// CREATE TABLE clients(id INTEGER PRIMARY KEY AUTOINCREMENT,
+// 	name TEXT NOT NULL,
+// 	description TEXT,
+// 	projectNumber INTEGER
+// );
 //
-// CREATE TABLE sqlite_sequence(name,seq);
-//
-// CREATE TABLE clients(id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT NOT NULL, projectNumber INTEGER NOT NULL DEFAULT 0);
-//
-// CREATE TABLE projects(id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT NOT NULL, client_id INTEGER, CONSTRAINT fk_client_id FOREIGN KEY (client_id) REFERENCES clients(id));
+// CREATE TABLE projects(id INTEGER PRIMARY KEY AUTOINCREMENT,
+// 	name TEXT NOT NULL,
+// 	description TEXT,
+// 	client_id INTEGER,
+// 	dueDate INTEGER,
+// 	CONSTRAINT fk_client_id FOREIGN KEY(client_id) REFERENCES clients(id)
+// );
 //
 // CREATE TABLE tasks(
 // id INTEGER PRIMARY KEY AUTOINCREMENT,
 // title TEXT NOT NULL,
+// description TEXT,
+// complete BOOLEAN DEFAULT 0,
 // project_id INTEGER NOT NULL,
 // parent_id INTEGER,
 // CONSTRAINT fk_project_id FOREIGN KEY (project_id) REFERENCES projects(id)
 // );
+//

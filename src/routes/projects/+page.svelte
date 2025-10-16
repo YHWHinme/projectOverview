@@ -19,7 +19,7 @@
 	}));
 
 	async function loadProjects() {
-		dbProjects = await lib.getProjects();
+		dbProjects = await lib.getProjectItem();
 	}
 
 	async function handleDelete(event: any) {

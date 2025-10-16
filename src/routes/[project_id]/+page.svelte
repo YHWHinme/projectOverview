@@ -11,12 +11,14 @@
 	let projectName: string = "Unknown";
 
 	// Binds whatever the dynamic id is to projectId or zero
+	// NOTE: State section
+	$: showCompleted = false;
 	$: projectId = parseInt($page.params.project_id || "0");
 
 	async function loadTasks() {
 		tasks = await lib.getProjectTask(projectId);
 		// Get project name
-		const projects = await lib.getProjects();
+		const projects = await lib.getProjectItem();
 		const project = projects.find((p) => p.id === projectId);
 		projectName = project ? project.name : "Unknown";
 	}
@@ -63,27 +65,38 @@
 <!-- Add Task Component -->
 <AddTask {projectId} on:add={loadTasks} />
 
+<br />
+<div class="flex items-center space-x-4">
+	<label class="flex items-center text-sm">
+		<input type="checkbox" bind:checked={showCompleted} class="mr-2 rounded" />
+		Show completed tasks
+	</label>
+</div>
+<br />
+
 <!-- Checking if there are tasks -->
 {#if tasks.length === 0}
 	<p>You've got no tasks...</p>
 {:else}
 	<!-- Displaying the tasks -->
 	{#each tasks as task}
-		<div>
-			<TaskItem
-				task={{
-					id: task.id,
-					text: task.title,
-					completed: task.complete === 1,
-					priority: "medium",
-					project: projectName,
-					dueDate: null,
-					labels: [],
-				}}
-				on:toggle={handleToggle}
-				on:delete={handleDelete}
-				on:rename={handleRename}
-			/>
-		</div>
+		{#if showCompleted || task.complete === 0}
+			<div>
+				<TaskItem
+					task={{
+						id: task.id,
+						text: task.title,
+						completed: task.complete === 1,
+						priority: "medium",
+						project: projectName,
+						dueDate: null,
+						labels: [],
+					}}
+					on:toggle={handleToggle}
+					on:delete={handleDelete}
+					on:rename={handleRename}
+				/>
+			</div>
+		{/if}
 	{/each}
 {/if}
