@@ -3,7 +3,7 @@
 
 	export let task: {
 		id: number;
-		text: string;
+		title: string;
 		completed: boolean;
 		priority: string;
 		project: string;
@@ -14,7 +14,7 @@
 	const dispatch = createEventDispatcher();
 
 	let isEditing = false;
-	let editValue = task.text;
+	let editValue = task.title;
 
 	function toggleTask() {
 		dispatch("toggle", task.id);
@@ -26,11 +26,11 @@
 
 	function startRename() {
 		isEditing = true;
-		editValue = task.text;
+		editValue = task.title;
 	}
 
 	function saveRename() {
-		if (editValue.trim() && editValue !== task.text) {
+		if (editValue.trim() && editValue !== task.title) {
 			dispatch("rename", { id: task.id, name: editValue.trim() });
 		}
 		isEditing = false;
@@ -38,7 +38,7 @@
 
 	function cancelRename() {
 		isEditing = false;
-		editValue = task.text;
+		editValue = task.title;
 	}
 
 	function handleKeydown(event: any) {
@@ -50,7 +50,7 @@
 	}
 
 	function focusInput(node: HTMLInputElement) {
-		// Focus and select all text
+		// Focus and select all title
 		setTimeout(() => {
 			node.focus();
 			node.select();
@@ -134,12 +134,26 @@
 					class:line-through={task.completed}
 					class:text-gray-500={task.completed}
 				>
-					{task.text}
+					{task.title}
 				</p>
 			{/if}
 
 			<!-- Action buttons -->
 			<div class="flex items-center space-x-1">
+				<!-- View Details button (shows on hover) -->
+				{#if !isEditing}
+					<button
+						on:click={() => dispatch('view-details', task)}
+						class="opacity-0 group-hover:opacity-100 text-gray-400 hover:text-gray-600 transition-all p-1 flex-shrink-0"
+						aria-label="View task details"
+					>
+						<svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+							<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+							<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+						</svg>
+					</button>
+				{/if}
+
 				<!-- Rename button (shows on hover) -->
 				{#if !isEditing}
 					<button
@@ -194,4 +208,3 @@
 		</div>
 	</div>
 </div>
-

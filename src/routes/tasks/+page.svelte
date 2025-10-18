@@ -1,6 +1,8 @@
 <script lang="ts">
   import ProjectSection from '$lib/Components/ProjectSection.svelte';
+  import TaskModal from '$lib/Components/TaskModal.svelte';
   import * as lib from "../../lib/lib";
+  import { taskModal } from '$lib/stores/modal';
   import { onMount } from "svelte";
 
   let dbTasks: lib.Tasks[] = [];
@@ -14,7 +16,7 @@
     const project = projects.find(p => p.id === task.project_id);
     return {
       id: task.id,
-      text: task.title,
+      title: task.title,
       completed: task.complete === 1,
       priority: "medium", // default
       project: project ? project.name : "Unknown",
@@ -80,6 +82,10 @@
     } else {
       alert('Failed to rename task');
     }
+  }
+
+  function handleTaskViewDetails(event: any) {
+    taskModal.openModal(event.detail);
   }
 
   function handleKeydown(event: any) {
@@ -156,6 +162,7 @@
           on:task-toggle={(e) => toggleTask(e.detail)}
           on:task-delete={(e) => deleteTask(e.detail)}
           on:task-rename={(e) => renameTask(e.detail)}
+          on:task-view-details={handleTaskViewDetails}
         />
       {/each}
     {:else}
@@ -165,5 +172,8 @@
         <p class="text-gray-500">Add your first task to get started</p>
       </div>
     {/if}
-  </div>
+   </div>
+
+  <!-- Task Modal -->
+  <TaskModal />
 </div>

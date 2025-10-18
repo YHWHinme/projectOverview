@@ -17,6 +17,7 @@ id INTEGER PRIMARY KEY AUTOINCREMENT,
 title TEXT NOT NULL,
 description TEXT,
 complete BOOLEAN DEFAULT 0,
+priority TEXT,
 project_id INTEGER NOT NULL,
 parent_id INTEGER,
 CONSTRAINT fk_project_id FOREIGN KEY (project_id) REFERENCES projects(id)

@@ -7,7 +7,8 @@ export interface Tasks {
   id: number;
   title: string;
   complete: number;
-  description: number;
+  description: string;
+  priority: string;
   project_id: number;
   parent_id?: number;
   children?: Tasks[]; // For hierarchical display
@@ -31,12 +32,12 @@ export function buildTaskTree(tasks: Tasks[]): Tasks[] {
   const rootTasks: Tasks[] = [];
 
   // First pass: create map of all tasks
-  tasks.forEach(task => {
+  tasks.forEach((task) => {
     taskMap.set(task.id, { ...task, children: [] });
   });
 
   // Second pass: build hierarchy
-  tasks.forEach(task => {
+  tasks.forEach((task) => {
     const taskWithChildren = taskMap.get(task.id)!;
     if (task.parent_id && taskMap.has(task.parent_id)) {
       // This is a child task
@@ -107,6 +108,24 @@ export async function updateTaskComplete(taskId: number, complete: number) {
   }
 }
 
+export async function updateTaskDescription(
+  taskId: number,
+  taskDescription: string,
+) {
+  try {
+    await (
+      await db
+    ).execute("UPDATE tasks SET description = ? WHERE id = ?", [
+      taskDescription,
+      taskId,
+    ]);
+    return 200;
+  } catch (error) {
+    console.log(error);
+    return 500;
+  }
+}
+
 // For deleting tasks
 export async function deleteTask(task_id: number) {
   try {
@@ -159,16 +178,19 @@ export async function deleteProject(project_id: number) {
 }
 
 // Creates a project
-export async function createProject(name: string, clientId: number = 0, description: string = "", dueDate: number | null = null) {
+export async function createProject(
+  name: string,
+  clientId: number = 0,
+  description: string = "",
+  dueDate: number | null = null,
+) {
   try {
     await (
       await db
-    ).execute("INSERT INTO projects(name, client_id, description, dueDate) VALUES(?, ?, ?, ?)", [
-      name,
-      clientId,
-      description,
-      dueDate,
-    ]);
+    ).execute(
+      "INSERT INTO projects(name, client_id, description, dueDate) VALUES(?, ?, ?, ?)",
+      [name, clientId, description, dueDate],
+    );
     return 200;
   } catch (error) {
     console.log(error);
@@ -177,7 +199,9 @@ export async function createProject(name: string, clientId: number = 0, descript
 }
 
 export async function getProjectItem(): Promise<Projects[]> {
-  const result = await (await db).select("SELECT id, name, client_id, description, dueDate FROM projects;");
+  const result = await (
+    await db
+  ).select("SELECT id, name, client_id, description, dueDate FROM projects;");
   return result as Projects[];
 }
 

@@ -5,7 +5,7 @@
   export let project: string;
   export let tasks: Array<{
     id: number;
-    text: string;
+    title: string;
     completed: boolean;
     priority: string;
     project: string;
@@ -36,6 +36,10 @@
 
   function handleTaskRename(event: any) {
     dispatch('task-rename', event.detail);
+  }
+
+  function handleTaskViewDetails(event: any) {
+    dispatch('task-view-details', event.detail);
   }
 </script>
 
@@ -82,6 +86,7 @@
             on:toggle={handleTaskToggle}
             on:delete={handleTaskDelete}
             on:rename={handleTaskRename}
+            on:view-details={handleTaskViewDetails}
           />
         {/each}
       {:else}

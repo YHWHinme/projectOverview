@@ -10,13 +10,29 @@ export interface ProjectModalData {
   progress: number;
 }
 
-interface ModalState {
+export interface TaskModalData {
+  id: number;
+  title: string;
+  description: string;
+  completed: boolean;
+  priority: string;
+  project: string;
+  dueDate: string | null;
+  labels: string[];
+}
+
+interface ProjectModalState {
   isOpen: boolean;
   project: ProjectModalData | null;
 }
 
-function createModalStore() {
-  const { subscribe, set, update } = writable<ModalState>({
+interface TaskModalState {
+  isOpen: boolean;
+  task: TaskModalData | null;
+}
+
+function createProjectModalStore() {
+  const { subscribe, set, update } = writable<ProjectModalState>({
     isOpen: false,
     project: null
   });
@@ -28,4 +44,18 @@ function createModalStore() {
   };
 }
 
-export const projectModal = createModalStore();
+function createTaskModalStore() {
+  const { subscribe, set, update } = writable<TaskModalState>({
+    isOpen: false,
+    task: null
+  });
+
+  return {
+    subscribe,
+    openModal: (task: TaskModalData) => set({ isOpen: true, task }),
+    closeModal: () => set({ isOpen: false, task: null })
+  };
+}
+
+export const projectModal = createProjectModalStore();
+export const taskModal = createTaskModalStore();

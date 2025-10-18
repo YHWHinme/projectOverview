@@ -388,6 +388,13 @@ All previously planned features have been successfully implemented:
   - Store progress in database vs. computed on-the-fly
   - Add progress tracking to project creation and editing workflows
 
+- **Truncated Task Description Display**: Show task descriptions in TaskItem component (15 chars max)
+  - Add `description?: string` to TaskItem prop interface
+  - Display truncated description in metadata section (first 15 chars + "..." if longer)
+  - Handle null/undefined/empty descriptions gracefully
+  - Style consistently with existing metadata elements (due dates, labels)
+  - Provides quick preview of task descriptions without opening modal
+
 ### Additional Notes:
 - **TaskBit** component is no longer used (replaced by TaskItem)
 - **TaskItem** now handles all task display with full functionality (toggle, delete, rename)

@@ -4,7 +4,9 @@
 	import { onMount } from "svelte";
 	import { page } from "$app/stores";
 	import TaskItem from "$lib/Components/TaskItem.svelte";
+	import TaskModal from "$lib/Components/TaskModal.svelte";
 	import AddTask from "$lib/Components/AddTask.svelte";
+	import { taskModal } from "$lib/stores/modal";
 
 	let tasks: Tasks[] = [];
 	let projectId: number;
@@ -38,12 +40,23 @@
 		}
 	}
 
+	// NOTE: Event handlers
 	async function handleDelete(event: any) {
 		const result = await lib.deleteTask(event.detail);
 		if (result === 200) {
 			loadTasks();
 		} else {
 			alert("Failed to delete task");
+		}
+	}
+
+	async function handleTaskDescUpdate(event: any) {
+		const { taskId, description } = event.detail;
+		const result = await lib.updateTaskDescription(taskId, description);
+		if (result === 200) {
+			loadTasks();
+		} else {
+			alert("Failed to update task description");
 		}
 	}
 
@@ -55,6 +68,10 @@
 		} else {
 			alert("Failed to rename task");
 		}
+	}
+
+	function handleViewDetails(event: any) {
+		taskModal.openModal(event.detail);
 	}
 
 	onMount(async () => {
@@ -85,8 +102,9 @@
 				<TaskItem
 					task={{
 						id: task.id,
-						text: task.title,
+						title: task.title,
 						completed: task.complete === 1,
+						description: task.description,
 						priority: "medium",
 						project: projectName,
 						dueDate: null,
@@ -95,8 +113,12 @@
 					on:toggle={handleToggle}
 					on:delete={handleDelete}
 					on:rename={handleRename}
+					on:view-details={handleViewDetails}
 				/>
 			</div>
 		{/if}
 	{/each}
 {/if}
+
+<!-- Task Modal -->
+<TaskModal on:update-description={handleTaskDescUpdate} />
