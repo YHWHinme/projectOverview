@@ -2,6 +2,14 @@ import Database from "@tauri-apps/plugin-sql";
 
 const db = Database.load("sqlite:data.db");
 
+// NOTE: Default Self Project Loader
+try {
+	(await db).execute("INSERT INTO clients OR IGNORE(name, description) VALUES (?,?)", ["Self", "Yourself"])
+} catch (error) {
+	console.log("Had an error with the automatic client creation")
+	console.log(error)
+}
+
 // NOTE: Tasks based functions
 export interface Tasks {
   id: number;
