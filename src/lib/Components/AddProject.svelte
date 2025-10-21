@@ -42,15 +42,15 @@
 
 <style>
   .add-project-form {
-    @apply flex items-start space-x-3 py-2 px-3 rounded-md bg-gray-50 border-b border-gray-100 ml-4 mb-1;
+    @apply flex items-start space-x-3 py-2 px-3 rounded-md bg-app-secondary border-b border-app-text-secondary ml-4 mb-1;
   }
   .add-project-input {
-    @apply flex-1 px-3 py-1 text-sm text-gray-800 border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-gray-500;
+    @apply flex-1 px-3 py-1 text-sm text-app-text-primary border border-app-text-secondary rounded focus:outline-none focus:ring-1 focus:ring-app-accent-primaryAccent;
   }
   .add-project-select {
-    @apply px-3 py-1 text-sm text-gray-800 border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-gray-500;
+    @apply px-3 py-1 text-sm text-app-text-primary border border-app-text-secondary rounded focus:outline-none focus:ring-1 focus:ring-app-accent-primaryAccent;
   }
   .add-project-btn {
-    @apply px-3 py-1 bg-gray-500 text-white text-sm rounded hover:bg-gray-600 transition-colors flex-shrink-0;
+    @apply px-3 py-1 bg-app-accent-primaryAccent text-app-background text-sm rounded hover:bg-app-accent-secondaryAccent transition-colors flex-shrink-0;
   }
 </style>

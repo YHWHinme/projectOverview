@@ -60,13 +60,13 @@
 	function getPriorityColor(priority: string) {
 		switch (priority) {
 			case "high":
-				return "text-red-500 border-red-500";
+				return "text-app-accent-primaryAccent border-app-accent-primaryAccent";
 			case "medium":
-				return "text-yellow-500 border-yellow-500";
+				return "text-app-accent-secondaryAccent border-app-accent-secondaryAccent";
 			case "low":
-				return "text-green-500 border-green-500";
+				return "text-knlCard-text-function border-knlCard-text-function";
 			default:
-				return "text-gray-500 border-gray-500";
+				return "text-app-text-secondary border-app-text-secondary";
 		}
 	}
 
@@ -89,7 +89,7 @@
 </script>
 
 <div
-	class="flex items-start space-x-3 py-2 px-3 rounded-md hover:bg-gray-50 transition-colors group ml-4"
+	class="flex items-start space-x-3 py-2 px-3 rounded-md hover:bg-app-secondary transition-colors group ml-4"
 	class:opacity-60={task.completed}
 >
 	<!-- Checkbox -->
@@ -98,8 +98,8 @@
 		class="mt-0.5 w-4 h-4 rounded-full border-2 flex items-center justify-center transition-colors {getPriorityColor(
 			task.priority,
 		)} flex-shrink-0"
-		class:bg-red-500={task.completed}
-		class:border-red-500={task.completed}
+		class:bg-app-accent-primaryAccent={task.completed}
+		class:border-app-accent-primaryAccent={task.completed}
 	>
 		{#if task.completed}
 			<svg
@@ -124,15 +124,15 @@
 					bind:value={editValue}
 					on:keydown={handleKeydown}
 					on:blur={saveRename}
-					class="text-gray-800 text-sm bg-transparent border-b border-gray-300 focus:outline-none focus:border-blue-500 flex-1"
+					class="text-app-text-primary text-sm bg-transparent border-b border-app-text-secondary focus:outline-none focus:border-app-accent-primaryAccent flex-1"
 					use:focusInput
 				/>
 			{:else}
 				<p
 					on:dblclick={startRename}
-					class="text-gray-800 text-sm cursor-pointer"
+					class="text-app-text-primary text-sm cursor-pointer"
 					class:line-through={task.completed}
-					class:text-gray-500={task.completed}
+					class:text-app-text-secondary={task.completed}
 				>
 					{task.title}
 				</p>
@@ -144,7 +144,7 @@
 				{#if !isEditing}
 					<button
 						on:click={() => dispatch('view-details', task)}
-						class="opacity-0 group-hover:opacity-100 text-gray-400 hover:text-gray-600 transition-all p-1 flex-shrink-0"
+						class="opacity-0 group-hover:opacity-100 text-app-text-textSecondary hover:text-app-accent-primaryAccent transition-all p-1 flex-shrink-0"
 						aria-label="View task details"
 					>
 						<svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -158,7 +158,7 @@
 				{#if !isEditing}
 					<button
 						on:click={startRename}
-						class="opacity-0 group-hover:opacity-100 text-gray-400 hover:text-blue-500 transition-all p-1 flex-shrink-0"
+						class="opacity-0 group-hover:opacity-100 text-app-text-textSecondary hover:text-app-accent-primaryAccent transition-all p-1 flex-shrink-0"
 					>
 						<svg class="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
 							<path
@@ -171,7 +171,7 @@
 				<!-- Delete button (shows on hover) -->
 				<button
 					on:click={deleteTask}
-					class="opacity-0 group-hover:opacity-100 text-gray-400 hover:text-red-500 transition-all p-1 flex-shrink-0"
+					class="opacity-0 group-hover:opacity-100 text-app-text-secondary hover:text-app-accent-primaryAccent transition-all p-1 flex-shrink-0"
 				>
 					<svg class="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
 						<path
@@ -190,10 +190,10 @@
 			{#if task.dueDate}
 				<span
 					class="text-xs px-1.5 py-0.5 rounded"
-					class:text-red-600={isOverdue(task.dueDate)}
-					class:bg-red-50={isOverdue(task.dueDate)}
-					class:text-gray-600={!isOverdue(task.dueDate)}
-					class:bg-gray-100={!isOverdue(task.dueDate)}
+					class:text-app-accent-primaryAccent={isOverdue(task.dueDate)}
+					class:bg-app-secondary={isOverdue(task.dueDate)}
+					class:text-app-text-secondary={!isOverdue(task.dueDate)}
+					class:bg-app-background={!isOverdue(task.dueDate)}
 				>
 					{formatDate(task.dueDate)}
 				</span>
@@ -201,7 +201,7 @@
 
 			<!-- Labels -->
 			{#each task.labels as label}
-				<span class="text-xs text-blue-600 bg-blue-50 px-1.5 py-0.5 rounded">
+				<span class="text-xs text-app-accent-primaryAccent bg-app-secondary px-1.5 py-0.5 rounded">
 					#{label}
 				</span>
 			{/each}

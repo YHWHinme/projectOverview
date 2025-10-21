@@ -18,16 +18,16 @@
   function getStatusColor(status: string) {
     switch (status) {
       case "Completed":
-        return "text-green-600 bg-green-100";
+        return "text-knlCard-text-function bg-app-secondary";
       case "In Progress":
-        return "text-blue-600 bg-blue-100";
+        return "text-app-accent-primaryAccent bg-app-secondary";
       case "Planning":
-        return "text-yellow-600 bg-yellow-100";
+        return "text-app-accent-secondaryAccent bg-app-secondary";
       case "On Hold":
-        return "text-gray-600 bg-gray-100";
+        return "text-app-text-secondary bg-app-secondary";
       default:
-        return "text-gray-600 bg-gray-100";
-    }
+        return "text-app-text-secondary bg-app-secondary";
+  }
   }
 
   function deleteProject() {
@@ -48,12 +48,12 @@
 </script>
 
 <div
-	class="bg-white rounded-lg shadow-md p-6 hover:shadow-lg transition-shadow group"
+	class="bg-cardHouse-background rounded-lg shadow-md p-6 hover:shadow-lg transition-shadow group"
 >
 	<!-- Project Header -->
 	<div class="flex justify-between items-start mb-4">
 		<button
-			class="text-lg font-semibold text-gray-800 cursor-pointer hover:text-blue-600 transition-colors text-left"
+			class="text-lg font-semibold text-app-text-primary cursor-pointer hover:text-app-accent-primaryAccent transition-colors text-left"
 			on:click={() => goto(`/${project.id}`)}
 		>
 			{project.name}
@@ -70,7 +70,7 @@
 			<!-- Delete button -->
 			<button
 				on:click={deleteProject}
-				class="opacity-0 group-hover:opacity-100 text-gray-400 hover:text-red-500 transition-all p-1 flex-shrink-0"
+				class="opacity-0 group-hover:opacity-100 text-app-text-secondary hover:text-app-accent-primaryAccent transition-all p-1 flex-shrink-0"
 			>
 				<svg class="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
 					<path
@@ -84,17 +84,17 @@
 	</div>
 
 	<!-- Project Description -->
-	<p class="text-gray-600 text-sm mb-4">{project.description}</p>
+	<p class="text-app-text-secondary text-sm mb-4">{project.description}</p>
 
 	<!-- Progress Bar -->
 	<div class="mb-4">
 		<div class="flex justify-between items-center mb-1">
-			<span class="text-xs font-medium text-gray-600">Progress</span>
-			<span class="text-xs text-gray-600">{project.progress}%</span>
+			<span class="text-xs font-medium text-app-text-secondary">Progress</span>
+			<span class="text-xs text-app-text-secondary">{project.progress}%</span>
 		</div>
-		<div class="w-full bg-gray-200 rounded-full h-2">
+		<div class="w-full bg-app-secondary rounded-full h-2">
 			<div
-				class="bg-blue-500 h-2 rounded-full transition-all duration-300"
+				class="bg-app-accent-primaryAccent h-2 rounded-full transition-all duration-300"
 				style="width: {project.progress}%"
 			></div>
 		</div>
@@ -103,17 +103,17 @@
 	<!-- Project Details -->
 	<div class="flex justify-between items-center text-sm">
 		<div>
-			<span class="text-gray-500">Due:</span>
-			<span class="text-gray-700 ml-1"
+			<span class="text-app-text-secondary">Due:</span>
+			<span class="text-app-text-primary ml-1"
 				>{new Date(project.dueDate).toLocaleDateString()}</span
 			>
 		</div>
 		<div class="flex items-center space-x-1">
-			<span class="text-gray-500">Team:</span>
+			<span class="text-app-text-secondary">Team:</span>
 			<div class="flex -space-x-1">
 				{#each project.team.slice(0, 3) as member, index}
 					<div
-						class="w-6 h-6 bg-gray-300 rounded-full flex items-center justify-center text-xs font-medium text-gray-600 border-2 border-white"
+						class="w-6 h-6 bg-app-secondary rounded-full flex items-center justify-center text-xs font-medium text-app-text-primary border-2 border-app-background"
 						title={member}
 					>
 						{member[0]}
@@ -121,7 +121,7 @@
 				{/each}
 				{#if project.team.length > 3}
 					<div
-						class="w-6 h-6 bg-gray-400 rounded-full flex items-center justify-center text-xs font-medium text-white border-2 border-white"
+						class="w-6 h-6 bg-app-text-secondary rounded-full flex items-center justify-center text-xs font-medium text-app-background border-2 border-app-background"
 					>
 						+{project.team.length - 3}
 					</div>
@@ -131,11 +131,11 @@
 	</div>
 
   <!-- Action Buttons -->
-  <div class="flex space-x-2 mt-4 pt-4 border-t border-gray-100">
-    <button
-      on:click={viewDetails}
-      class="flex-1 bg-gray-100 hover:bg-gray-200 text-gray-700 py-2 px-3 rounded text-xs font-medium transition-colors"
-    >
+  <div class="flex space-x-2 mt-4 pt-4 border-t border-app-text-secondary">
+     <button
+       on:click={viewDetails}
+       class="flex-1 bg-modal-buttons-background hover:bg-modal-buttons-hovery text-modal-buttons-text py-2 px-3 rounded text-xs font-medium transition-colors"
+     >
       View Details
     </button>
   </div>
