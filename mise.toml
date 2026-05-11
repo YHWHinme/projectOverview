@@ -3,3 +3,11 @@ deno = "latest"
 go = "latest"
 jujutsu = "latest"
 sqlc = "latest"
+
+[tasks.serve]
+run = "deno run dev"
+description = "Runs the frontend server with deno"
+
+[tasks.generate]
+run = "sqlc generate"
+description = "Runs sqlc to generate the typesafe sql for typescript"
